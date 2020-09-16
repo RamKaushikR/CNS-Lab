@@ -1,5 +1,5 @@
 public class TranspositionCipher {
-  private int[] key, decryptKey;
+  private int[] key;
   int keyLength;
 
   public TranspositionCipher() {}
@@ -7,27 +7,34 @@ public class TranspositionCipher {
   public TranspositionCipher(int[] key, int n) {
     this.key = key;
     this.keyLength = n;
-    calculateDecryptionKey();
   }
 
   public void setKey(int[] key, int n) {
     this.key = key;
     this.keyLength = n;
-    calculateDecryptionKey();
   }
 
-  private void calculateDecryptionKey() {
-    this.decryptKey = new int[this.keyLength];
-    for(int i = 0;i < this.keyLength;i++)
-      this.decryptKey[this.key[i] - 1] = i + 1;
-    System.out.print("Decryption key is: ");
-    for(int i = 0;i < this.keyLength;i++){
-      if(i != this.keyLength - 1)
-        System.out.print(this.decryptKey[i] + " ");
-      else
-        System.out.println(this.decryptKey[i]);
+  public int find(int[] key, int val, int n){
+    int t = -1;
+    for(int i=0;i<n;i++){
+      if(key[i] == val)
+        t = i;
     }
+    return t;
   }
+  public int[] sort(int[] arr, int n) {    
+    int temp = 0;  
+    for(int i=0; i < n; i++){  
+      for(int j=1; j < (n-i); j++){  
+        if(arr[j-1] > arr[j]){  
+          temp = arr[j-1];  
+          arr[j-1] = arr[j];  
+          arr[j] = temp;  
+        }               
+      }  
+    }
+    return arr;
+  }  
 
   public String encryption(String plainText) {
     plainText = plainText.toUpperCase();
@@ -35,7 +42,16 @@ public class TranspositionCipher {
     String encryptedText = "";
     char[][] mat = new char[plainText.length() / this.keyLength + 1][this.keyLength];
     int i = 0, j = 0, index = 0;
-
+    int []arr = new int[10];
+    for(int k=0;k<this.keyLength;k++)
+      arr[k] = this.key[k];
+    // System.out.print("Decryption key: ");
+    // for(int k=0;k<this.keyLength;k++)
+    //   System.out.print(arr[k] + " ");
+    // System.out.println();
+    arr = sort(arr, this.keyLength);
+    // for(int k=0;k<this.keyLength;k++)
+    //   System.out.println(arr[k]);
     while(index < plainText.length()) {
       mat[i][j] = plainText.charAt(index);
       index++;
@@ -53,7 +69,8 @@ public class TranspositionCipher {
       m++;
     for(j = 0;j < this.keyLength;j++) {
       for(i = 0;i < m;i++){
-        encryptedText += String.valueOf(mat[i][this.key[j] - 1]);
+        int v = find(this.key, arr[j],this.keyLength);
+        encryptedText += String.valueOf(mat[i][v]);
       }
     }
     return encryptedText;
@@ -76,7 +93,7 @@ public class TranspositionCipher {
 
     for(i = 0;i < rows;i++) {
       for(j = 0;j < this.keyLength;j++){
-        decryptedText += String.valueOf(mat[i][this.decryptKey[j]-1]);
+        decryptedText += String.valueOf(mat[i][this.key[j]-1]);
       }
     }
     return decryptedText;

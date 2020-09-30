@@ -135,6 +135,30 @@ class DES {
     return DES.permute(inputBits, keyBits, true);
   }
 
+  private static void displayBits(int[] bits) {
+		for(int i=0 ; i < bits.length ; i+=4) {
+			String output = new String();
+			for(int j=0 ; j < 4 ; j++)
+				output += bits[i+j];
+			System.out.print(Integer.toBinaryString(Integer.parseInt(output, 2)));
+		}
+		System.out.println();
+	}
+
+  public void display(boolean isDecrypt) {
+    for(int n=0 ; n < 16 ; n++) {
+      System.out.print("Round " + (n+1) + ": ");
+
+			if(isDecrypt) {
+        System.out.print("Key = ");
+				displayBits(subkey[15-n]);
+			} else {
+        System.out.print("Key = ");
+				displayBits(subkey[n]);
+      } 
+    }
+  }
+
   private static String permute(int[] inputBits, int[] keyBits, boolean isDecrypt) {
 		// Initial permutation step takes input bits and permutes into the newBits array
 		int newBits[] = new int[inputBits.length];
@@ -196,7 +220,8 @@ class DES {
 		int D1[] = new int[28];
 		
 		int rotationTimes = (int) rotations[round];
-		C1 = leftShift(C, rotationTimes);
+
+    C1 = leftShift(C, rotationTimes);
 		D1 = leftShift(D, rotationTimes);
 		
 		int CnDn[] = new int[56];

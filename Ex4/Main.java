@@ -3,7 +3,7 @@ import java.util.*;
 class Main {
   private static int[] hexToBits(String hexValue) {
     int[] bits = new int[64];
-    for(int i=0; i < 16; i++) {
+    for(int i=0; i < hexValue.length(); i++) {
       String s = Integer.toBinaryString(Integer.parseInt(hexValue.charAt(i) + "", 16));
 
       while(s.length() < 4)
@@ -46,26 +46,53 @@ class Main {
       if(choice == 1) {        
         System.out.print("Enter plain text: ");
         String plainText = sc.nextLine();
-        int[] inputBits = asciiToBits(plainText);
 
-        System.out.print("Enter the key text: ");
+        System.out.print("Enter the key hex value: ");
         String keyText = sc.nextLine();
-        int[] keyBits = asciiToBits(keyText);
+        int[] keyBits = hexToBits(keyText);
 
-        System.out.println("Encrypted Hex Value: " + des.encryption(inputBits, keyBits));
+        int i = 0;
+        int n = plainText.length();
+        String encryption = "";
+        while(i < n) {
+          int[] inputBits;
+
+          if(i + 8 < n)
+            inputBits = asciiToBits(plainText.substring(i, i+8));
+          else
+            inputBits = asciiToBits(plainText.substring(i));
+
+          encryption += des.encryption(inputBits, keyBits);
+          i += 8;
+        }
+        des.display(false);
+        System.out.println("Encrypted Hex Value: " + encryption);
       }
 
       else if(choice == 2) {
         System.out.print("Enter encrypted hex value: ");
         String encryptedHex = sc.nextLine();
-        int[] inputBits = hexToBits(encryptedHex);
 
-        System.out.print("Enter key text: ");
+        System.out.print("Enter key hex value: ");
         String keyText = sc.nextLine();
-        int[] keyBits = asciiToBits(keyText);
+        int[] keyBits = hexToBits(keyText);
 
-        String decryptedHex = des.decryption(inputBits, keyBits);
-        System.out.println("Decrypted Text: " + hexToASCII(decryptedHex));
+        int i = 0;
+        int n = encryptedHex.length();
+        String decryption = "";
+        while(i < n) {
+          int[] inputBits;
+
+          if(i + 16 < n)
+            inputBits = hexToBits(encryptedHex.substring(i, i+16));
+          else
+            inputBits = hexToBits(encryptedHex.substring(i));
+
+          decryption += hexToASCII(des.decryption(inputBits, keyBits));
+          i += 16;
+        }
+        des.display(true);
+        System.out.println("Decrypted Text: " + decryption);
       }
 
     } while(choice != 3);

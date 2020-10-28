@@ -8,3 +8,5 @@
 5. AES Algorithm
 6. RSA Algorithm
 7. DH Key Exchange
+8. SHA1 Algorithm
+9. DSS Algorithm
